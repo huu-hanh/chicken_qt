@@ -31,6 +31,8 @@ QByteArray a_realdata;
 uint32_t count = 0;
 QString s_setpoint;
 QString s_realdata;
+QStringList l_realdata;
+QStringList l_setpoint;
 
 uint64_t check_len;
 
@@ -122,20 +124,13 @@ void MainWindow::on_btn_disconect_clicked()
 
 void MainWindow::on_btn_plot_clicked()
 {
-//    s_realdata.clear();
-//    s_setpoint.clear()
+    //    s_realdata.clear();
+    //    s_setpoint.clear()
     if (Serialll->isOpen())
     {
 
         // Timer program
         time.start();
-//        qDebug() << "DEGUB 2 ";
-//        //Timer read data frome MPU
-//        QTimer* timer_receive_plot = new QTimer(this);
-//        timer_receive_plot->setTimerType(Qt::PreciseTimer); //higher priority
-//        timer_receive_plot->setInterval(7);
-//        connect(timer_receive_plot, &QTimer::timeout, this, &MainWindow::readDataFromSTM);
-//        timer_receive_plot->start();
 
         // create graphs
         ui->customPlot1->addGraph();                          // tao them 1 line
@@ -145,7 +140,7 @@ void MainWindow::on_btn_plot_clicked()
 
         // create x, y
         ui->customPlot1->xAxis->setRange(0, 200);
-        ui->customPlot1->yAxis->setRange(-100, 100);
+        ui->customPlot1->yAxis->setRange(500, 2000);
         ui->customPlot1->addGraph();
         ui->customPlot1->graph(1)->setPen(QPen(Qt::red, 2));
 
@@ -161,52 +156,10 @@ void MainWindow::on_btn_plot_clicked()
 
 void MainWindow::updateGraph()
 {
-    // qDebug() << "s_setpoint : " << s_setpoint;
-    // qDebug() << "s_realdata : " << s_realdata;
-    if (s_setpoint[s_setpoint.size() - 1] == ' ')
-        s_setpoint.chop(1);
-    if (s_realdata[s_realdata.size() - 1] == ' ')
-        s_realdata.chop(1);
-
-    QStringList l_setpoint;
-    for (int i = 0; i < s_setpoint.size(); i += 4)
-    {
-        QString str = s_setpoint.mid(i, 4);
-        l_setpoint.append(str);
-    }
-    QStringList l_realdata;
-    for (int i = 0; i < s_realdata.size(); i += 4)
-    {
-        QString str = s_realdata.mid(i, 4);
-        l_realdata.append(str);
-    }
-
-    if (l_realdata.size() > l_setpoint.size())
-        check_len = l_realdata.size();
-    else
-        check_len = l_realdata.size();
-
-    for (int i = 0; i < check_len; i++)
-    {
-        double temp_setpoint = l_setpoint[i].toDouble();
-        setpoint_data.append(temp_setpoint);
-        double temp_realdata = l_realdata[i].toDouble();
-        realdata_data.append(temp_realdata);
-    }
-    // qDebug() << "setpoint_data : " << setpoint_data;
-    // qDebug() << "realdata_data : " << realdata_data;
-    SetPointsVector = QVector<double>::fromList(setpoint_data);
-    dataPointsVector = QVector<double>::fromList(realdata_data);
     QVector<double> x(dataPointsVector.size());
     for (uint32_t i = 0; i < dataPointsVector.size(); i++)
     {
-
-        x[i] = time.elapsed() / 1000.0 + i * 0.01; // elapsed la thoi gian da troi qua tu khi timer dc start , cong i*0.05 la cong don tich luy may cai thoi gian cũ thoi
-                                                   //        qDebug() << "time : " << x[i];
-        if (dataPointsVector.size() > 10000)       // lay mau 100s
-        {
-            timer->stop();
-        }
+        x[i] = i;
     }
     ui->customPlot1->graph(0)->addData(x, SetPointsVector);
     ui->customPlot1->graph(1)->setData(x, dataPointsVector);
@@ -214,8 +167,6 @@ void MainWindow::updateGraph()
     ui->customPlot1->rescaleAxes();
     ui->customPlot1->replot();
     ui->customPlot1->update();
-    dataPointsVector.clear();
-    SetPointsVector.clear();
     ui->customPlot1->graph(0)->data()->clear();
     ui->customPlot1->graph(1)->data()->clear();
 }
@@ -293,10 +244,41 @@ void MainWindow::readDataFromSTM()
             {
                 if (i < 4)
                     s_setpoint.append((char)rx_buff[i]);
+
                 else
                     s_realdata.append((char)rx_buff[i]);
             }
-            qDebug() << "DEBUG 1  ";
+            qDebug() << "s_realdata.size()" << s_realdata.size();
+            if (s_realdata.size() == 800)
+                s_realdata.remove(0, 4);
+            if (s_setpoint.size() == 800)
+                s_setpoint.remove(0, 4);
+
+            /// qDebug() << "Could not read data";
+            l_setpoint.clear();
+            l_realdata.clear();
+            setpoint_data.clear();
+            realdata_data.clear();
+            for (int i = 0; i < s_setpoint.size(); i += 4)
+            {
+                QString str = s_setpoint.mid(i, 4);
+                l_setpoint.append(str);
+            }
+
+            for (int i = 0; i < s_realdata.size(); i += 4)
+            {
+                QString str = s_realdata.mid(i, 4);
+                l_realdata.append(str);
+            }
+            for (int i = 0; i < l_realdata.size(); i++)
+            {
+                double temp_setpoint = l_setpoint[i].toDouble();
+                setpoint_data.append(temp_setpoint);
+                double temp_realdata = l_realdata[i].toDouble();
+                realdata_data.append(temp_realdata);
+            }
+            SetPointsVector = QVector<double>::fromList(setpoint_data);
+            dataPointsVector = QVector<double>::fromList(realdata_data);
         }
     }
     else

@@ -23,6 +23,12 @@
       <height>571</height>
      </rect>
     </property>
+    <property name="font">
+     <font>
+      <family>Segoe Print</family>
+      <bold>true</bold>
+     </font>
+    </property>
     <property name="title">
      <string>Graph</string>
     </property>
@@ -621,6 +627,12 @@
       <width>251</width>
       <height>51</height>
      </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Segoe Print</family>
+      <bold>true</bold>
+     </font>
     </property>
     <property name="text">
      <string>GET-DATA</string>

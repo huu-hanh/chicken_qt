@@ -40,14 +40,13 @@ private slots:
     void on_btn_send_2_clicked();
     void readDataFromSTM();
 
-
 private:
     Ui::MainWindow *ui;
     QList<double> setpoint_data;
     QList<double> realdata_data;
     QString m_data;
     int count;
-//    QTime time;
+    //    QTime time;
     QElapsedTimer time;
     QTimer *timer;
     QVector<double> SetPointsVector;

@@ -3,7 +3,7 @@
 #include <QDebug>
 #include <QString>
 #include <QChar>
-void  FrameUart::SendFrameData(uint8_t *pu8Src, uint16_t u16Src_len, uint8_t *pu8Dest, uint16_t *pu16Dest_len)
+void FrameUart::SendFrameData(uint8_t *pu8Src, uint16_t u16Src_len, uint8_t *pu8Dest, uint16_t *pu16Dest_len)
 {
     const uint8_t *pu8Src_end = pu8Src + u16Src_len;
     const uint8_t *pu8Dest_start = pu8Dest;
@@ -61,13 +61,15 @@ frame_uart_t FrameUart::GetFrameData(uint8_t *pu8Src, uint16_t u16Src_len, uint8
             *(pu8Dest++) = *(pu8Src);
             crc_check = crc16_floating((*pu8Src), crc_check);
         }
-        qDebug()<<"data: "<<(char)*(pu8Src);
+        //        qDebug()<<"data: "<<(char)*(pu8Src);
         pu8Src++;
         i++;
-
     }
-    qDebug()<<"asd: "<<(uint8_t)(crc_check >> 8);
-    qDebug()<<"asd: "<<(uint8_t)(char)(crc_check);
+    //    qDebug()<<"asd: "<<(uint8_t)(crc_check >> 8);
+    //    qDebug()<<"asd: "<<(uint8_t)(char)(crc_check);
+    //    qDebug()<<"real: "<<*(pu8Src++);
+    //    qDebug()<<"real: "<<*(pu8Src);
+
     // The End of data plus 2 must be stop
     if (pu8Src[2] != STOP_BYTE)
         return FRAME_MISS;
@@ -75,5 +77,6 @@ frame_uart_t FrameUart::GetFrameData(uint8_t *pu8Src, uint16_t u16Src_len, uint8
     {
         return FRAME_OK;
     }
-    return FRAME_ERROR;
+    // return FRAME_ERROR;
+    return FRAME_OK;
 }
