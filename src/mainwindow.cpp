@@ -131,7 +131,6 @@ void MainWindow::on_btn_plot_clicked()
 
         // Timer program
         time.start();
-
         // create graphs
         ui->customPlot1->addGraph();                          // tao them 1 line
         ui->customPlot1->graph(0)->setPen(QPen(Qt::blue, 2)); // Màu đường line vs độ dày 2 pixel
@@ -148,7 +147,7 @@ void MainWindow::on_btn_plot_clicked()
         timer = new QTimer(this);
         connect(timer, SIGNAL(timeout()), this, SLOT(updateGraph()));
         timer->setTimerType(Qt::CoarseTimer); // lower priority
-        timer->start(10);
+        timer->start(35);
 
         qDebug() << "DEBUG 2  ";
     }
