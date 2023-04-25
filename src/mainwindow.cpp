@@ -122,21 +122,11 @@ void MainWindow::on_btn_disconect_clicked()
 
 void MainWindow::on_btn_plot_clicked()
 {
-//    s_realdata.clear();
-//    s_setpoint.clear()
     if (Serialll->isOpen())
     {
 
         // Timer program
         time.start();
-//        qDebug() << "DEGUB 2 ";
-//        //Timer read data frome MPU
-//        QTimer* timer_receive_plot = new QTimer(this);
-//        timer_receive_plot->setTimerType(Qt::PreciseTimer); //higher priority
-//        timer_receive_plot->setInterval(7);
-//        connect(timer_receive_plot, &QTimer::timeout, this, &MainWindow::readDataFromSTM);
-//        timer_receive_plot->start();
-
         // create graphs
         ui->customPlot1->addGraph();                          // tao them 1 line
         ui->customPlot1->graph(0)->setPen(QPen(Qt::blue, 2)); // Màu đường line vs độ dày 2 pixel
@@ -144,8 +134,8 @@ void MainWindow::on_btn_plot_clicked()
         ui->customPlot1->yAxis->setLabel("Velocity (vong/phut)");
 
         // create x, y
-        ui->customPlot1->xAxis->setRange(0, 200);
-        ui->customPlot1->yAxis->setRange(-100, 100);
+        ui->customPlot1->xAxis->setRange(0, 250);
+        ui->customPlot1->yAxis->setRange(1000, 2000);
         ui->customPlot1->addGraph();
         ui->customPlot1->graph(1)->setPen(QPen(Qt::red, 2));
 
@@ -153,7 +143,7 @@ void MainWindow::on_btn_plot_clicked()
         timer = new QTimer(this);
         connect(timer, SIGNAL(timeout()), this, SLOT(updateGraph()));
         timer->setTimerType(Qt::CoarseTimer); // lower priority
-        timer->start(10);
+        timer->start(35);
 
         qDebug() << "DEBUG 2  ";
     }
@@ -161,8 +151,7 @@ void MainWindow::on_btn_plot_clicked()
 
 void MainWindow::updateGraph()
 {
-    // qDebug() << "s_setpoint : " << s_setpoint;
-    // qDebug() << "s_realdata : " << s_realdata;
+
     if (s_setpoint[s_setpoint.size() - 1] == ' ')
         s_setpoint.chop(1);
     if (s_realdata[s_realdata.size() - 1] == ' ')
@@ -181,12 +170,7 @@ void MainWindow::updateGraph()
         l_realdata.append(str);
     }
 
-    if (l_realdata.size() > l_setpoint.size())
-        check_len = l_realdata.size();
-    else
-        check_len = l_realdata.size();
-
-    for (int i = 0; i < check_len; i++)
+    for (int i = 0; i < 250; i++)
     {
         double temp_setpoint = l_setpoint[i].toDouble();
         setpoint_data.append(temp_setpoint);
